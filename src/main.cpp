@@ -1,4 +1,7 @@
 #include "raylib.h"
+#include "stdlib.h"
+#include "voxel.hpp"
+#include "time.h"
 
 #define WIDTH 400
 #define HEIGHT WIDTH
@@ -20,26 +23,38 @@ void update_camera(Camera *cam)
 
 int main()
 {
+   srand(time(0));
    // TODO: remember to change the title :)
    InitWindow(WIDTH, HEIGHT, "title");
 
    Camera camera;
    camera.projection = CAMERA_PERSPECTIVE;
    camera.position = (Vector3){ 0, 2, 4 };   
-   camera.target = (Vector3){ 0, 2, 0 };     
+   camera.target = (Vector3){ 0, 0, 0 };     
    camera.up = (Vector3){ 0, 1, 0 };         
    camera.fovy = 60.0f;                            
    
+   Voxel vox(16);
+   vox[{0, 0, 0}] = 1;
+   vox[{0, 2, 3}] = 1;
+   vox[{0, 5, 0}] = 1;
+   vox[{1, 0, 4}] = 1;
+
+   DisableCursor();
+
+
    while ( !WindowShouldClose() ) {
    
-      update_camera(&camera);
+      //update_camera(&camera);
+      UpdateCamera(&camera, CAMERA_FREE);
       
       BeginDrawing();
       ClearBackground(RAYWHITE);
          BeginMode3D(camera);
                                                                                  //
-         DrawCube(camera.target, 0.5f, 0.5f, 0.5f, PURPLE);
-         DrawCubeWires(camera.target, 0.5f, 0.5f, 0.5f, DARKPURPLE);
+         //DrawCube(camera.target, 0.5f, 0.5f, 0.5f, PURPLE);
+         //DrawCubeWires(camera.target, 0.5f, 0.5f, 0.5f, DARKPURPLE);
+         vox.draw();
 
          EndMode3D();
       EndDrawing();
