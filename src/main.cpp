@@ -1,24 +1,11 @@
 #include "raylib.h"
 #include "stdlib.h"
+#include "camera.hpp"
 #include "voxel.hpp"
 #include "time.h"
 
 #define WIDTH 400
 #define HEIGHT WIDTH
-
-
-void update_camera(Camera *cam)
-{
-   Vector3 rot = { 0, 0, 0 };
-   Vector3 move = { 0, 0, 0 };
-
-   rot.x = IsKeyDown(KEY_A) * 0.1 - IsKeyDown(KEY_D) * 0.1;
-   rot.y = IsKeyDown(KEY_W) * 0.1 - IsKeyDown(KEY_S) * 0.1;
-
-   float zoom = GetMouseWheelMove() * -0.5;
-
-   UpdateCameraPro(cam, move, rot, zoom);
-}
 
 
 int main()
@@ -29,34 +16,37 @@ int main()
 
    Camera camera;
    camera.projection = CAMERA_PERSPECTIVE;
-   camera.position = (Vector3){ 0, 2, 4 };   
-   camera.target = (Vector3){ 0, 0, 0 };     
+   camera.position = (Vector3){ 16, 16, 16 };   
+   camera.target = (Vector3){ 8, 0, 8 };     
    camera.up = (Vector3){ 0, 1, 0 };         
-   camera.fovy = 60.0f;                            
+   camera.fovy = 45;                            
    
    Voxel vox(16);
    vox[{0, 0, 0}] = 1;
    vox[{0, 2, 3}] = 1;
    vox[{0, 5, 0}] = 1;
    vox[{1, 0, 4}] = 1;
+   vox[{15, 0, 15}] = 1;
 
    DisableCursor();
+   SetTargetFPS(60);
 
 
    while ( !WindowShouldClose() ) {
    
-      //update_camera(&camera);
-      UpdateCamera(&camera, CAMERA_FREE);
+      update_camera(&camera);
       
       BeginDrawing();
       ClearBackground(RAYWHITE);
          BeginMode3D(camera);
                                                                                  //
-         //DrawCube(camera.target, 0.5f, 0.5f, 0.5f, PURPLE);
-         //DrawCubeWires(camera.target, 0.5f, 0.5f, 0.5f, DARKPURPLE);
          vox.draw();
 
          EndMode3D();
+
+      //DrawText(TextFormat("angle: %0.4f", CAMERA_ANGLE), 10, 40, 20, BLACK);
+      DrawFPS(10, 10);
+
       EndDrawing();
    }
 
