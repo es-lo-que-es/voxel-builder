@@ -35,18 +35,6 @@ char& Voxel::operator[] (Vector3 p)
 }
 
 
-void Voxel::draw_grid() const
-{
-   float end = data.size();
-
-   for ( int i = 0; i <= data.size(); ++i ) {
-      float v = i;
-      DrawLine3D({v, 0, 0}, {v, 0, end}, wire_col);
-      DrawLine3D({0, 0, v}, {end, 0, v}, wire_col);
-   }
-}
-
-
 void Voxel::draw_voxels() const
 {
    float o = 0.5;
@@ -73,6 +61,5 @@ void Voxel::draw_voxels() const
 
 void Voxel::draw() const
 {
-   draw_grid();
    draw_voxels();
 }

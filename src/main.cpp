@@ -3,6 +3,7 @@
 #include "camera.hpp"
 #include "voxel.hpp"
 #include "time.h"
+#include "grid.hpp"
 
 #define WIDTH 400
 #define HEIGHT WIDTH
@@ -28,9 +29,7 @@ int main()
    vox[{1, 0, 4}] = 1;
    vox[{15, 0, 15}] = 1;
 
-   DisableCursor();
    SetTargetFPS(60);
-
 
    while ( !WindowShouldClose() ) {
    
@@ -38,15 +37,16 @@ int main()
       
       BeginDrawing();
       ClearBackground(RAYWHITE);
+
          BeginMode3D(camera);
-                                                                                 //
+         
+         draw_grid(camera.position, 16);
          vox.draw();
 
          EndMode3D();
 
-      //DrawText(TextFormat("angle: %0.4f", CAMERA_ANGLE), 10, 40, 20, BLACK);
+      //DrawText(TextFormat("pos: %0.2f, %0.2f %0.2f", pos.x, pos.y, pos.z), 10, 40, 20, BLACK);
       DrawFPS(10, 10);
-
       EndDrawing();
    }
 

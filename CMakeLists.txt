@@ -3,5 +3,12 @@ cmake_minimum_required(VERSION 3.10)
 project(voxel-builder)
 
 
-add_executable(run src/main.cpp src/voxel.cpp src/camera.cpp)
+set ( SRC
+   src/camera.cpp
+   src/voxel.cpp
+   src/grid.cpp
+   src/main.cpp
+)
+
+add_executable(run ${SRC})
 target_link_libraries(run raylib m)

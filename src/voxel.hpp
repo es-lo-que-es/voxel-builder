@@ -14,7 +14,6 @@ struct Voxel {
 
    char& operator[] (Vector3 pos);
    void draw_voxels() const;
-   void draw_grid() const;
 
    std::vector<std::vector<std::vector<char>>> data;
    Palette palette;
