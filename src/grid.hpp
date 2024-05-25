@@ -2,6 +2,9 @@
 #define GRID_HEADER_HPP
 
 #include "raylib.h"
-void draw_grid(Vector3 camera_pos,  float c);
+
+
+enum GridOption { Full, Floor, None };
+void draw_grid(Vector3 camera_pos,  float count, GridOption option = Floor);
 
 #endif

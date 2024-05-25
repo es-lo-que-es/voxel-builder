@@ -13,12 +13,14 @@ void draw_lines(Vector3 s, Vector3 e, Vector3 m, int count)
 }
 
 
-void draw_grid(Vector3 camera_pos,  float c)
+void draw_grid(Vector3 camera_pos,  float c, GridOption option)
 {
+   if ( option == None ) return;
    Vector3 pos = Vector3Subtract(camera_pos, {c , c, c});
 
    draw_lines({0, 0, 0}, {0, 0, c}, {1, 0, 0}, c);
    draw_lines({0, 0, 0}, {c, 0, 0}, {0, 0, 1}, c);
+   if ( option == Floor ) return;
    
    // x-wall
    if ( pos.x > 0 ) {
