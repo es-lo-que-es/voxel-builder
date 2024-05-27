@@ -7,10 +7,10 @@
 
 
 
-struct Voxel {
+struct Voxels {
 
    void draw() const;
-   explicit Voxel(size_t size);
+   explicit Voxels(size_t size);
 
    char& operator[] (Vector3 pos);
    void draw_voxels() const;

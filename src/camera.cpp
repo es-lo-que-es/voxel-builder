@@ -21,3 +21,13 @@ void update_camera(Camera * cam)
    float zoom = GetMouseWheelMove() * -0.92;
    CameraMoveToTarget(cam, zoom);
 }
+
+
+void init_camera(Camera * cam, Vector3 pos)
+{
+   cam->position = pos;   
+   cam->target = (Vector3){ pos.x / 2, 0, pos.z / 2 };     
+   cam->projection = CAMERA_PERSPECTIVE;
+   cam->up = (Vector3){ 0, 1, 0 };         
+   cam->fovy = 45;                            
+}

@@ -1,5 +1,6 @@
 #include "voxel.hpp"
 #include "stdlib.h"
+#include <cassert>
 #include <cstdint>
 
 
@@ -16,7 +17,7 @@ Color random_color()
 }
 
 
-Voxel::Voxel(size_t size)
+Voxels::Voxels(size_t size)
 {
    data.resize(size);
 
@@ -29,13 +30,17 @@ Voxel::Voxel(size_t size)
 }
 
 
-char& Voxel::operator[] (Vector3 p) 
+char& Voxels::operator[] (Vector3 p) 
 {
+   assert(p.x >= 0 and p.x < data.size());
+   assert(p.y >= 0 and p.y < data.size());
+   assert(p.z >= 0 and p.z < data.size());
+
    return data[p.x][p.y][p.z];
 }
 
 
-void Voxel::draw_voxels() const
+void Voxels::draw_voxels() const
 {
    float o = 0.5;
    Vector3 size = { 1, 1, 1 };
@@ -59,7 +64,7 @@ void Voxel::draw_voxels() const
 }
 
 
-void Voxel::draw() const
+void Voxels::draw() const
 {
    draw_voxels();
 }
