@@ -4,15 +4,14 @@
 #include "camera.hpp"
 #include "voxel.hpp"
 #include "grid.hpp"
-#include <cmath>
 #include <cstdio>
 #include <raylib.h>
-#include "raymath.h"
+#include "voxel_picker.hpp"
+
 
 #define WIDTH 400
 #define HEIGHT WIDTH
 
-#include <stdio.h>
 #include <chrono>
 
 
@@ -34,67 +33,7 @@ void end_timer(const char * str)
 }
 
 
-struct VoxelPicker {
-   
-   void update(Voxels * vox, Camera cam);
-   void entry_collision(Camera cam, float size);
-   void exit_collision(float size);
 
-   Vector3 selected_pos;
-   bool selected;
-
-   RayCollision collision;
-   Ray ray;
-};
-
-
-Vector3 rotate_vec(Vector3 vec, Vector3 angle)
-{
-   Matrix m = MatrixRotateXYZ(angle);
-   return Vector3Transform(vec, m);
-}
-
-
-
-void VoxelPicker::exit_collision(float s)
-{
-   float distance = s * 2;
-   Vector3 p = collision.point;
-
-   float x = p.x + distance * ray.direction.x;
-   float y = p.y + distance * ray.direction.y;
-   float z = p.z + distance * ray.direction.z;
-
-   ray.direction = Vector3Negate(ray.direction);
-   ray.position = { x, y, z };
-
-   collision = GetRayCollisionBox(ray, {{0, 0, 0}, {s, s, s}});
-}
-
-
-void VoxelPicker::entry_collision(Camera cam, float s)
-{
-   ray = GetMouseRay(GetMousePosition(), cam);
-   collision = GetRayCollisionBox(ray, {{0, 0, 0}, {s, s, s}});
-}
-
-
-void VoxelPicker::update(Voxels * vox, Camera cam)
-{
-   float size = vox->data.size();
-   entry_collision(cam, size);
-
-   Vector3 p = collision.point;
-   selected = collision.hit;
-
-   if ( !selected ) return;
-   exit_collision(size);
-
-   Vector3 exit = collision.point;
-
-   selected_pos = { floorf(exit.x), floorf(exit.y), floorf(exit.z) };
-   printf("dir: %2.2f, %2.2f, %2.2f\n", ray.direction.x, ray.direction.y, ray.direction.z);
-}
 
 
 struct VoxelBuilder {
@@ -112,13 +51,23 @@ VoxelBuilder::VoxelBuilder(int size)
 {
    init_camera(&camera, { 16, 16, 16 });
    
-   /*
+   voxels[{8, 0, 8}] = 1;
+   voxels[{8, 1, 8}] = 1;
+   voxels[{8, 2, 8}] = 1;
+   voxels[{8, 3, 8}] = 1;
+   voxels[{8, 4, 8}] = 1;
+
    voxels[{0, 0, 0}] = 1;
-   voxels[{0, 2, 3}] = 1;
-   voxels[{0, 5, 0}] = 1;
-   voxels[{1, 0, 4}] = 1;
+   voxels[{0, 1, 0}] = 1;
+   voxels[{0, 2, 0}] = 1;
+   voxels[{0, 3, 0}] = 1;
+   voxels[{0, 4, 0}] = 1;
+
    voxels[{15, 0, 15}] = 1;
-   */
+   voxels[{15, 1, 15}] = 1;
+   voxels[{15, 2, 15}] = 1;
+   voxels[{15, 3, 15}] = 1;
+   voxels[{15, 4, 15}] = 1;
 }
 
 
@@ -137,13 +86,11 @@ int main()
    while ( !WindowShouldClose() ) {
    
       update_camera(&app.camera);
-
-      if ( IsMouseButtonReleased(MOUSE_BUTTON_LEFT) )
+      if ( IsMouseButtonReleased(MOUSE_BUTTON_LEFT) ) 
          app.picker.update(&app.voxels, app.camera);
    
       //start_timer();
       Vector3 v = app.picker.selected_pos;
-      //printf("v.x: %2.2f, v.y: %2.2f, v.z: %2.2f\n", v.x, v.y, v.z);
       //end_timer("branching one\n");
 
       BeginDrawing();
@@ -157,7 +104,10 @@ int main()
          Vector3 p = app.picker.selected_pos;
          p = { p.x + 0.5f, p.y + 0.5f, p.z+0.5f };
          if ( app.picker.selected ) DrawCubeWiresV(p, {1, 1, 1}, GREEN);
-         
+            
+         for ( auto v : app.picker.trace )
+            DrawCubeV({ v.x + 0.5f, v.y + 0.5f, v.z + 0.5f }, { 0.2, 0.2, 0.2 }, MAGENTA);
+
          DrawRay(app.picker.ray, RED);
 
 

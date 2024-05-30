@@ -4,6 +4,7 @@ project(voxel-builder)
 
 
 set ( SRC
+   src/voxel_picker.cpp
    src/camera.cpp
    src/voxel.cpp
    src/grid.cpp
