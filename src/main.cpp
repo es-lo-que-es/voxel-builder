@@ -96,7 +96,6 @@ int main()
       ClearBackground(RAYWHITE);
 
          BeginMode3D(app.camera);
-         // TODO: move this out of draw
          draw_grid(app.camera.position, 16);
          app.voxels.draw();
 

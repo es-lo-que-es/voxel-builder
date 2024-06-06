@@ -27,9 +27,7 @@ void VoxelPicker::entry_collision(Camera cam, float s)
    float d = 0.0001;
    ray = GetMouseRay(GetMousePosition(), cam);
    
-   printf("ray origin: %2.2f %2.2f %2.2f\n", ray.position.x, ray.position.y, ray.position.z);
    collision = GetRayCollisionBox(ray, {{0, 0, 0}, {s - d, s - d, s - d}});
-   printf("collision: %f %f %f\n", collision.point.x, collision.point.y, collision.point.z);
 }
 
 
@@ -115,12 +113,15 @@ void VoxelPicker::DDA(Voxels * vox, Vector3 s, Vector3 e, Vector3 dir)
    Vector3 tdelta = get_tdelta(dir);
    Vector3 tmax = get_tmax(s, nb, dir);
    
+   Vector3 prev_index = index;
    while ( !Vector3Eq(index, e) ) {
 
       if ( (*vox)[index] != 0 ) {
-         selected_pos = index;
+         selected_pos = prev_index;
          return; 
       }
+
+      prev_index = index;
 
       if (tmax.x < tmax.y) {
          if (tmax.x < tmax.z) {
@@ -135,9 +136,11 @@ void VoxelPicker::DDA(Voxels * vox, Vector3 s, Vector3 e, Vector3 dir)
             index.z += step.z; tmax.z += tdelta.z;
          }
       }
-   }
 
-   selected_pos = e;
+   }
+   
+   if ( (*vox)[index] != 0 ) selected_pos = prev_index;
+   else selected_pos = e;
 }
 
 
