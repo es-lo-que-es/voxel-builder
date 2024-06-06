@@ -71,6 +71,12 @@ VoxelBuilder::VoxelBuilder(int size)
 }
 
 
+void draw_cube_at(Vector3 p, Color col)
+{
+   p = { p.x + 0.5f, p.y + 0.5f, p.z+0.5f };
+   DrawCubeWiresV(p, {1, 1, 1}, col);
+}
+
 
 int main()
 {
@@ -90,8 +96,6 @@ int main()
       if ( IsMouseButtonReleased(MOUSE_BUTTON_LEFT) ) 
          app.picker.update(&app.voxels, app.camera);
    
-      Vector3 v = app.picker.selected_pos;
-
       BeginDrawing();
       ClearBackground(RAYWHITE);
 
@@ -99,9 +103,10 @@ int main()
          draw_grid(app.camera.position, 16);
          app.voxels.draw();
 
-         Vector3 p = app.picker.selected_pos;
-         p = { p.x + 0.5f, p.y + 0.5f, p.z+0.5f };
-         if ( app.picker.selected ) DrawCubeWiresV(p, {1, 1, 1}, GREEN);
+         if ( app.picker.selected ) {
+            draw_cube_at(app.picker.remove_position, WHITE);
+            draw_cube_at(app.picker.add_position, GREEN);
+         }
             
          EndMode3D();
 

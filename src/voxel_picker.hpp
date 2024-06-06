@@ -14,7 +14,9 @@ struct VoxelPicker {
    void entry_collision(Camera cam, float size);
    void exit_collision(float size);
 
-   Vector3 selected_pos;
+   Vector3 remove_position;
+   Vector3 add_position;
+
    bool selected;
 
    RayCollision collision;

@@ -116,11 +116,7 @@ void VoxelPicker::DDA(Voxels * vox, Vector3 s, Vector3 e, Vector3 dir)
    Vector3 prev_index = index;
    while ( !Vector3Eq(index, e) ) {
 
-      if ( (*vox)[index] != 0 ) {
-         selected_pos = prev_index;
-         return; 
-      }
-
+      if ( (*vox)[index] != 0 ) break;
       prev_index = index;
 
       if (tmax.x < tmax.y) {
@@ -139,8 +135,22 @@ void VoxelPicker::DDA(Voxels * vox, Vector3 s, Vector3 e, Vector3 dir)
 
    }
    
-   if ( (*vox)[index] != 0 ) selected_pos = prev_index;
-   else selected_pos = e;
+   if ( (*vox)[index] != 0 ) {
+      add_position = prev_index;
+      remove_position = index;
+   } else {
+      remove_position = index;
+      add_position = index;
+   }
+}
+
+
+bool in_box(Vector3 point, float size)
+{
+   if ( point.x >= size || point.y >= size || point.z >= size ) return false;
+   if ( point.x < 0 || point.y < 0 || point.z < 0 ) return false;
+
+   return true;
 }
 
 
@@ -151,6 +161,11 @@ void VoxelPicker::update(Voxels * vox, Camera cam)
 
    selected = collision.hit;
    if ( !selected ) return;
+
+   // raylib collision from within box gives exit collision
+   // so we just take camera position as entry
+   if ( in_box(cam.position, size) )
+      collision.point = cam.position;
 
    // save entry collision data
    Vector3 entry = collision.point;
