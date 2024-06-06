@@ -13,6 +13,7 @@ struct Voxels {
    explicit Voxels(size_t size);
 
    char& operator[] (Vector3 pos);
+   bool in_range(Vector3 pos) const;
    void draw_voxels() const;
 
    std::vector<std::vector<std::vector<char>>> data;

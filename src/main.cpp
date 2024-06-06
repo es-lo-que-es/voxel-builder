@@ -86,12 +86,11 @@ int main()
    while ( !WindowShouldClose() ) {
    
       update_camera(&app.camera);
+
       if ( IsMouseButtonReleased(MOUSE_BUTTON_LEFT) ) 
          app.picker.update(&app.voxels, app.camera);
    
-      //start_timer();
       Vector3 v = app.picker.selected_pos;
-      //end_timer("branching one\n");
 
       BeginDrawing();
       ClearBackground(RAYWHITE);
@@ -105,12 +104,6 @@ int main()
          p = { p.x + 0.5f, p.y + 0.5f, p.z+0.5f };
          if ( app.picker.selected ) DrawCubeWiresV(p, {1, 1, 1}, GREEN);
             
-         for ( auto v : app.picker.trace )
-            DrawCubeV({ v.x + 0.5f, v.y + 0.5f, v.z + 0.5f }, { 0.2, 0.2, 0.2 }, MAGENTA);
-
-         DrawRay(app.picker.ray, RED);
-
-
          EndMode3D();
 
       //DrawText(TextFormat("pos: %0.2f, %0.2f %0.2f", pos.x, pos.y, pos.z), 10, 40, 20, BLACK);

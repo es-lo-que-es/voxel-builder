@@ -68,3 +68,14 @@ void Voxels::draw() const
 {
    draw_voxels();
 }
+
+
+bool Voxels::in_range(Vector3 pos) const
+{
+   float s = data.size();
+
+   if ( pos.x < 0 || pos.y < 0 || pos.z < 0 ) return false;
+   if ( pos.x >= s || pos.y >= s || pos.z >= s ) return false;
+
+   return true;
+}

@@ -14,7 +14,6 @@ struct VoxelPicker {
    void entry_collision(Camera cam, float size);
    void exit_collision(float size);
 
-   std::vector<Vector3> trace;
    Vector3 selected_pos;
    bool selected;
 

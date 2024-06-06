@@ -5,7 +5,7 @@
 
 void VoxelPicker::exit_collision(float s)
 {
-   float d = 0.0000;
+   float d = 0.0001;
    float distance = s * 2;
    Vector3 p = collision.point;
    
@@ -24,18 +24,18 @@ void VoxelPicker::exit_collision(float s)
 
 void VoxelPicker::entry_collision(Camera cam, float s)
 {
-   float d = 0.0000;
+   float d = 0.0001;
    ray = GetMouseRay(GetMousePosition(), cam);
    
    printf("ray origin: %2.2f %2.2f %2.2f\n", ray.position.x, ray.position.y, ray.position.z);
    collision = GetRayCollisionBox(ray, {{0, 0, 0}, {s - d, s - d, s - d}});
-   printf("collision: %2.2f %2.2f %2.2f\n", collision.point.x, collision.point.y, collision.point.z);
+   printf("collision: %f %f %f\n", collision.point.x, collision.point.y, collision.point.z);
 }
 
 
 Vector3 no_zeroes(Vector3 v)
 {
-   float small = 0.000001;
+   float small = 0.00001;
 
    v.x = v.x == 0 ? v.x + small : v.x;
    v.y = v.y == 0 ? v.y + small : v.y;
@@ -45,15 +45,13 @@ Vector3 no_zeroes(Vector3 v)
 }
 
 
-Vector3 entry_edges(Vector3 entry, Vector3 exit, Vector3 dir)
+Vector3 next_boundary(Vector3 index, Vector3 dir)
 {
-   Vector3 diff;
+   index.x = index.x + (dir.x > 0 ? 1 : 0);
+   index.y = index.y + (dir.y > 0 ? 1 : 0);
+   index.z = index.z + (dir.z > 0 ? 1 : 0);
 
-   diff.x = (entry.x != exit.x && dir.x < 0) ? -1 : 0;
-   diff.y = (entry.y != exit.y && dir.y < 0) ? -1 : 0;
-   diff.z = (entry.z != exit.z && dir.z < 0) ? -1 : 0;
-
-   return diff;
+   return index;
 }
 
 
@@ -69,61 +67,72 @@ float _floor(float f)
    return (float)((int)f); 
 }
 
+Vector3 vector3_floor(Vector3 a)
+{
+   return { _floor(a.x), _floor(a.y), _floor(a.z) };
+}
+
+
+Vector3 get_tmax(Vector3 start, Vector3 next_bound, Vector3 dir)
+{
+   Vector3 tmax;
+
+   tmax.x = (next_bound.x - start.x) / dir.x;
+   tmax.y = (next_bound.y - start.y) / dir.y;
+   tmax.z = (next_bound.z - start.z) / dir.z; 
+
+   return tmax;
+}
+
+
+Vector3 get_tdelta(Vector3 dir)
+{
+   Vector3 tdelta;
+
+   tdelta.x = 1 / abs(dir.x);
+   tdelta.y = 1 / abs(dir.y);
+   tdelta.z = 1 / abs(dir.z);
+
+   return tdelta;
+}
+
+// WARNING: the edge values are dodged by colliding with a box a bit smaller 
+// than actual voxel space, which will provide some degree of precision error
+// for the extrmely large voxel space grid
 
 void VoxelPicker::DDA(Voxels * vox, Vector3 s, Vector3 e, Vector3 dir)
 {
-   trace.clear();
-
-   int i = 0;
    dir = no_zeroes(dir);
    float steps[] = { 1, -1 };
 
-   // current voxel
-   Vector3 c = { _floor(s.x), _floor(s.y), _floor(s.z) };
-   e = { _floor(e.x), _floor(e.y), _floor(e.z) };
+   e = vector3_floor(e);
+   Vector3 index = vector3_floor(s);
 
+   Vector3 nb = next_boundary(index, dir);
    Vector3 step = { steps[dir.x < 0], steps[dir.y < 0], steps[dir.z < 0] };
 
-   // next voxel boundary
-   Vector3 nb = { c.x + step.x, c.y + step.y, c.z + step.z };
-   printf("entry: %2.2f %2.2f %2.2f\n", c.x, c.y, c.z);
-
    // distance to the next voxel boundary
-   Vector3 tmax = { (nb.x - s.x) / dir.x, (nb.y - s.y) / dir.y, (nb.z - s.z) / dir.z }; 
-   Vector3 tdelta = { 1 / (dir.x * step.x), 1 / (dir.y * step.y), 1 / (dir.z * step.z) };
+   Vector3 tdelta = get_tdelta(dir);
+   Vector3 tmax = get_tmax(s, nb, dir);
    
-   // decrease indexes for negative directions
-   c = Vector3Add(c, entry_edges(c, e, dir));
+   while ( !Vector3Eq(index, e) ) {
 
-   printf("entry: %2.2f %2.2f %2.2f\n", c.x, c.y, c.z);
-   printf("exit: %2.2f %2.2f %2.2f\n", e.x, e.y, e.z);
-
-   while ( !Vector3Eq(c, e) ) {
-
-      trace.push_back(c);
-      printf("%2.2f %2.2f %2.2f\n", c.x, c.y, c.z);
-      
-      if ( c.x >= 0 and c.y >= 0 and c.z >= 0 ) {
-
-         if ( (*vox)[c] != 0 ) {
-            selected_pos = c;
-            return;
-         }
-      } else {
-         break;
+      if ( (*vox)[index] != 0 ) {
+         selected_pos = index;
+         return; 
       }
 
       if (tmax.x < tmax.y) {
          if (tmax.x < tmax.z) {
-            c.x += step.x; tmax.x += tdelta.x;
+            index.x += step.x; tmax.x += tdelta.x;
          } else {
-            c.z += step.z; tmax.z += tdelta.z;
+            index.z += step.z; tmax.z += tdelta.z;
          }
       } else {
          if (tmax.y < tmax.z) {
-            c.y += step.y; tmax.y += tdelta.y;
+            index.y += step.y; tmax.y += tdelta.y;
          } else {
-            c.z += step.z; tmax.z += tdelta.z;
+            index.z += step.z; tmax.z += tdelta.z;
          }
       }
    }
@@ -147,6 +156,5 @@ void VoxelPicker::update(Voxels * vox, Camera cam)
    exit_collision(size);
    Vector3 exit = collision.point;
 
-   //selected_pos = { floorf(exit.x), floorf(exit.y), floorf(exit.z) };
    DDA(vox, entry, exit, dir);
 }
