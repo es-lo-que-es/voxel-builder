@@ -4,15 +4,30 @@
 #include "voxel_picker.hpp"
 #include "color_picker.hpp"
 
-#define WIDTH 600.0f
+#define WIDTH 500.0f
 #define COLOR_PICKER_SIZE 30.0f
 
 #define HEIGHT WIDTH
 #define VOXEL_SPACE_SIZE 32.0f
 
-
+Color HELP_COLOR = { 30, 30, 30, 255 };
 Color BACKGROUND = RAYWHITE;
 Vector2 COLOR_PICKER_POS = { WIDTH - COLOR_PICKER_SIZE, 0 };
+
+#define HELP_FONT_SIZE 20
+Vector2 HELP_POS = { HELP_FONT_SIZE, HEIGHT - HELP_FONT_SIZE * 3 };
+
+
+void draw_help()
+{
+   Color col = HELP_COLOR;
+
+   Vector2 pos = HELP_POS;
+   DrawText("LMB - draw;          RMB - erase", pos.x, pos.y, HELP_FONT_SIZE, col);
+
+   pos.y += HELP_FONT_SIZE;
+   DrawText("W,A,S,D - rotate;    ESC - clear all", pos.x, pos.y, HELP_FONT_SIZE, col);
+}
 
 
 struct VoxelBuilder {
@@ -50,6 +65,7 @@ void VoxelBuilder::remove_voxel(Vector3 index)
 void VoxelBuilder::update()
 {
    update_camera(&camera);
+   if ( IsKeyReleased(KEY_ESCAPE) ) voxels.clear();
    
    color_picker.update();
    if ( color_picker.updated ) return;
@@ -80,6 +96,7 @@ void VoxelBuilder::draw() const
 
       color_picker.draw();
       DrawFPS(10, 10);
+      draw_help();
 
    EndDrawing();
 }
@@ -105,6 +122,8 @@ void VoxelBuilder::run()
 int main()
 {
    InitWindow(WIDTH, HEIGHT, "voxel-builder");
+
+   SetExitKey(KEY_NULL); 
    SetTargetFPS(60);
    
    VoxelBuilder app(VOXEL_SPACE_SIZE);

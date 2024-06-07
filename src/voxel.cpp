@@ -4,7 +4,7 @@
 #include <cstdint>
 
 
-const Color wire_col = { 140, 140, 140, 255 };
+const Color wire_col = { 40, 40, 40, 255 };
 
 
 Color random_color()
@@ -78,4 +78,14 @@ bool Voxels::in_range(Vector3 pos) const
    if ( pos.x >= s || pos.y >= s || pos.z >= s ) return false;
 
    return true;
+}
+
+
+void Voxels::clear()
+{
+   for ( auto &x : data ) {
+      for ( auto &y : x ) {
+         std::fill(y.begin(), y.end(), 0);
+      }
+   }
 }

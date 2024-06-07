@@ -18,6 +18,7 @@ struct Voxels {
 
    bool in_range(Vector3 pos) const;
    char& operator[] (Vector3 pos);
+   void clear();
 
 };
 
