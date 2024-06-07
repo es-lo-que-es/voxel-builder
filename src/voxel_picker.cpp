@@ -97,7 +97,6 @@ Vector3 get_tdelta(Vector3 dir)
 // WARNING: the edge values are dodged by colliding with a box a bit smaller 
 // than actual voxel space, which will provide some degree of precision error
 // for the extrmely large voxel space grid
-
 void VoxelPicker::DDA(Voxels * vox, Vector3 s, Vector3 e, Vector3 dir)
 {
    dir = no_zeroes(dir);
