@@ -40,7 +40,7 @@ char& Voxels::operator[] (Vector3 p)
 }
 
 
-void Voxels::draw_voxels() const
+void Voxels::draw_voxels(const Palette * palette) const
 {
    float o = 0.5;
    Vector3 size = { 1, 1, 1 };
@@ -53,7 +53,7 @@ void Voxels::draw_voxels() const
 
             if ( data[i][j][k] == 0 ) continue;
 
-            Color col = palette.get(data[i][j][k]);
+            Color col = palette->get(data[i][j][k]);
             Vector3 pos = { o+(float)i, o+float(j), o+float(k) };
 
             DrawCubeWiresV(pos, size, wire_col);
@@ -64,9 +64,9 @@ void Voxels::draw_voxels() const
 }
 
 
-void Voxels::draw() const
+void Voxels::draw(const Palette * palette) const
 {
-   draw_voxels();
+   draw_voxels(palette);
 }
 
 

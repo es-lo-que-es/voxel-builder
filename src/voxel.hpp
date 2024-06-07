@@ -9,15 +9,15 @@
 
 struct Voxels {
 
-   void draw() const;
+   std::vector<std::vector<std::vector<char>>> data;
+
    explicit Voxels(size_t size);
 
-   char& operator[] (Vector3 pos);
-   bool in_range(Vector3 pos) const;
-   void draw_voxels() const;
+   void draw_voxels(const Palette * palette) const;
+   void draw(const Palette * palette) const;
 
-   std::vector<std::vector<std::vector<char>>> data;
-   Palette palette;
+   bool in_range(Vector3 pos) const;
+   char& operator[] (Vector3 pos);
 
 };
 
