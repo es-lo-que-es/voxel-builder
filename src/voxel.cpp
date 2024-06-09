@@ -2,9 +2,7 @@
 #include "stdlib.h"
 #include <cassert>
 #include <cstdint>
-
-
-const Color wire_col = { 40, 40, 40, 255 };
+#include "config.hpp"
 
 
 Color random_color()
@@ -32,10 +30,6 @@ Voxels::Voxels(size_t size)
 
 char& Voxels::operator[] (Vector3 p) 
 {
-   assert(p.x >= 0 and p.x < data.size());
-   assert(p.y >= 0 and p.y < data.size());
-   assert(p.z >= 0 and p.z < data.size());
-
    return data[p.x][p.y][p.z];
 }
 
@@ -52,11 +46,11 @@ void Voxels::draw_voxels(const Palette * palette) const
          for ( int k = 0; k < data[j].size(); ++k ) {
 
             if ( data[i][j][k] == 0 ) continue;
-
+            
             Color col = palette->get(data[i][j][k]);
             Vector3 pos = { o+(float)i, o+float(j), o+float(k) };
-
-            DrawCubeWiresV(pos, size, wire_col);
+            
+            DrawCubeWiresV(pos, size, WIRE_COLOR);
             DrawCubeV(pos, size, col);
          }
       }

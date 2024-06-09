@@ -4,6 +4,7 @@ project(voxel-builder)
 
 
 set ( SRC
+   src/voxel_builder.cpp
    src/color_picker.cpp
    src/voxel_picker.cpp
 
@@ -16,5 +17,6 @@ set ( SRC
    src/main.cpp
 )
 
-add_executable(run ${SRC})
-target_link_libraries(run raylib m)
+
+add_executable(voxel-builder ${SRC})
+target_link_libraries(voxel-builder raylib m)

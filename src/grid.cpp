@@ -1,11 +1,12 @@
 #include "grid.hpp"
 #include "raymath.h"
+#include "config.hpp"
 
 void draw_lines(Vector3 s, Vector3 e, Vector3 m, int count)
 {
    for ( int i = 0; i <= count; ++i ) {
 
-      DrawLine3D(s, e, {0,0,0, 50});
+      DrawLine3D(s, e, GRID_COLOR);
 
       s = Vector3Add(s, m);
       e = Vector3Add(e, m);

@@ -1,0 +1,40 @@
+<html>
+
+   <head>
+      <title> voxel-builder </title>
+      <link rel = "stylesheet" href = "style.css" />
+   </head>
+
+   <body>
+      
+      <div class = "container" >
+         <p class = "header"> voxel-bulder web build</p>
+
+         <hr/>
+         <p id = "placeholder"> LOADING... </p>
+         <canvas style="display:none" id = "canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
+         <hr/>
+      </div>
+
+      <script type='text/javascript'>
+
+         const can = document.getElementById("canvas");
+         const placeholder = document.getElementById("placeholder");
+
+         var Module = {
+
+            canvas: (() => { return can; })(),
+            setStatus: (text) => {
+               if ( !text ) {
+                  placeholder.style.display = "none";
+                  canvas.style.display = "block";
+               }
+            }
+         }
+
+      </script>
+
+      <script async type="text/javascript" src="voxel-builder.js"></script>
+
+   </body>
+</html>

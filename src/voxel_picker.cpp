@@ -1,5 +1,4 @@
 #include "voxel_picker.hpp"
-#include "stdio.h"
 #include "raymath.h"
 
 
@@ -141,6 +140,7 @@ void VoxelPicker::DDA(Voxels * vox, Vector3 s, Vector3 e, Vector3 dir)
       remove_position = index;
       add_position = index;
    }
+
 }
 
 
